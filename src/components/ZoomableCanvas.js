@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch';
 import './ZoomableCanvas.css';
-import { GridCanvas } from './GridCanvas';
+import { GridCanvas } from './GridCanvas.js';
 
 export const ZoomableCanvas = ({ children }) => {
   const [currentZoom, setCurrentZoom] = useState(1);
