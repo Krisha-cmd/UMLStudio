@@ -1,13 +1,13 @@
 {
   "files": {
-    "main.css": "/UMLStudio/static/css/main.a172b195.css",
-    "main.js": "/UMLStudio/static/js/main.e36625b1.js",
+    "main.css": "/UMLStudio/static/css/main.aa6e9a88.css",
+    "main.js": "/UMLStudio/static/js/main.552256cc.js",
     "index.html": "/UMLStudio/index.html",
-    "main.a172b195.css.map": "/UMLStudio/static/css/main.a172b195.css.map",
-    "main.e36625b1.js.map": "/UMLStudio/static/js/main.e36625b1.js.map"
+    "main.aa6e9a88.css.map": "/UMLStudio/static/css/main.aa6e9a88.css.map",
+    "main.552256cc.js.map": "/UMLStudio/static/js/main.552256cc.js.map"
   },
   "entrypoints": [
-    "static/css/main.a172b195.css",
-    "static/js/main.e36625b1.js"
+    "static/css/main.aa6e9a88.css",
+    "static/js/main.552256cc.js"
   ]
 }
