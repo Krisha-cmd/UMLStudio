@@ -1,27 +1,15 @@
 import React, { useState } from 'react';
-import styled from 'styled-components';
+import './App.css';
 import { v4 as uuidv4 } from 'uuid';
 import { ZoomableCanvas } from './components/ZoomableCanvas';
 import { UMLClassShape } from './components/UMLClassShape';
 import { SidePanel } from './components/SidePanel';
-
-const AppContainer = styled.div`
-  display: flex;
-  width: 100vw;
-  height: 100vh;
-  overflow: hidden;
-  background: #f0f2f5;
-`;
-
-const CanvasArea = styled.div`
-  flex: 1;
-  height: 100%;
-  position: relative;
-`;
+import { RightSidePanel } from './components/RightSidePanel';
 
 const App = () => {
   const [classes, setClasses] = useState([]);
   const [selectedClassId, setSelectedClassId] = useState(null);
+  const [isClassCreationMode, setIsClassCreationMode] = useState(false);
 
   const addNewClass = () => {
     const newClass = {
@@ -55,6 +43,23 @@ const App = () => {
 
   const selectClass = (id) => {
     setSelectedClassId(id);
+    setIsClassCreationMode(true); // Open side panel when class is selected
+  };
+
+  const createClassFromPanel = (classData) => {
+    const newClass = {
+      id: uuidv4(),
+      name: classData.name,
+      attributes: classData.attributes,
+      methods: classData.methods,
+      position: { 
+        x: Math.random() * 300 + 50, 
+        y: Math.random() * 200 + 50 
+      }
+    };
+
+    setClasses(prev => [...prev, newClass]);
+    setSelectedClassId(newClass.id);
   };
 
   const clearCanvas = () => {
@@ -71,13 +76,21 @@ const App = () => {
     }
   };
 
+  const toggleClassCreation = () => {
+    setIsClassCreationMode(!isClassCreationMode);
+  };
+
   return (
-    <AppContainer>
+    <div className="app-container">
       <SidePanel 
-        onAddClass={addNewClass}
         onClearCanvas={clearCanvas}
+        onCreateClass={createClassFromPanel}
+        isVisible={isClassCreationMode}
+        onClose={() => setIsClassCreationMode(false)}
+        selectedClass={classes.find(cls => cls.id === selectedClassId)}
+        onUpdateClass={updateClass}
       />
-      <CanvasArea onClick={handleCanvasClick}>
+      <div className="canvas-area" onClick={handleCanvasClick}>
         <ZoomableCanvas>
           {classes.map(umlClass => (
             <UMLClassShape
@@ -89,8 +102,12 @@ const App = () => {
             />
           ))}
         </ZoomableCanvas>
-      </CanvasArea>
-    </AppContainer>
+      </div>
+      <RightSidePanel 
+        onToggleClassCreation={toggleClassCreation}
+        isCreating={isClassCreationMode}
+      />
+    </div>
   );
 };
 

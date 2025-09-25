@@ -1,3 +1,14 @@
+.panel-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+  cursor: pointer;
+}
+
 .side-panel {
   background-color: #1e1e1e;
   color: #f0f0f0;
@@ -6,6 +17,18 @@
   font-family: Arial, sans-serif;
   border-right: 1px solid #333;
   overflow-y: auto;
+  position: fixed;
+  left: 0;
+  top: 0;
+  height: 100vh;
+  z-index: 1000;
+  transform: translateX(-100%);
+  transition: transform 0.3s ease-in-out;
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.3);
+}
+
+.side-panel.visible {
+  transform: translateX(0);
 }
 
 .panel-title {
@@ -96,4 +119,69 @@ select:focus {
 
 .add-btn:hover {
   background: #666;
+}
+
+.panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.form-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.form-row input {
+  flex: 1;
+}
+
+.remove-btn {
+  background: #dc3545;
+  color: #fff;
+  border: none;
+  padding: 4px 8px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 14px;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.remove-btn:hover {
+  background: #c82333;
+}
+
+.panel-actions {
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid #444;
+}
+
+.create-class-btn {
+  background: #444;
+  color: #fff;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  width: 100%;
+  transition: background-color 0.2s ease;
+}
+
+.create-class-btn:hover:not(:disabled) {
+  background: #218838;
+}
+
+.create-class-btn:disabled {
+  background: #6c757d;
+  cursor: not-allowed;
 }

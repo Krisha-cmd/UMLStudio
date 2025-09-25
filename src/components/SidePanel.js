@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./SidePanel.css";
 
-export const SidePanel = (onClearCanvas) => {
+export const SidePanel = ({ elements, onAddElement, onClearCanvas, isVisible, isClassCreationMode, onCreateClass, onClose, selectedClass, onUpdateClass }) => {
   const [className, setClassName] = useState("Student");
   const [classType, setClassType] = useState("Abstract");
   const [attributes, setAttributes] = useState([]);
@@ -10,6 +10,39 @@ export const SidePanel = (onClearCanvas) => {
 
   const [showClassDetails, setShowClassDetails] = useState(true);
   const [showRelationDetails, setShowRelationDetails] = useState(false);
+
+  // Populate form when a class is selected
+  useEffect(() => {
+    if (selectedClass) {
+      setClassName(selectedClass.name);
+      
+      // Parse attributes from UML format back to form format
+      const parsedAttributes = selectedClass.attributes.map(attr => {
+        const visibilitySymbol = attr.charAt(0);
+        const visibility = visibilitySymbol === '+' ? 'public' : 'private';
+        const attrText = attr.substring(1).trim();
+        const [name, type] = attrText.split(':').map(s => s.trim());
+        return { name: name || '', visibility, type: type || 'string', initial: '' };
+      });
+      setAttributes(parsedAttributes);
+
+      // Parse methods from UML format back to form format
+      const parsedMethods = selectedClass.methods.map(method => {
+        const visibilitySymbol = method.charAt(0);
+        const visibility = visibilitySymbol === '+' ? 'public' : 'private';
+        const methodText = method.substring(1).trim();
+        const [name, returnType] = methodText.split(':').map(s => s.trim());
+        const methodName = name.replace('()', '');
+        return { name: methodName || '', visibility, returnType: returnType || 'void' };
+      });
+      setMethods(parsedMethods);
+    } else {
+      // Reset form for new class creation
+      setClassName("Student");
+      setAttributes([]);
+      setMethods([]);
+    }
+  }, [selectedClass]);
 
   // Handlers
   const addAttribute = () => {
@@ -26,9 +59,62 @@ export const SidePanel = (onClearCanvas) => {
     ]);
   };
 
+  const handleCreateClass = () => {
+    if (className.trim()) {
+      // Convert attributes to UML format
+      const formattedAttributes = attributes.map(attr => {
+        const visibilitySymbol = attr.visibility === 'private' ? '-' : '+';
+        const initialValue = attr.initial ? ` = ${attr.initial}` : '';
+        return `${visibilitySymbol} ${attr.name}: ${attr.type}${initialValue}`;
+      });
+
+      // Convert methods to UML format
+      const formattedMethods = methods.map(method => {
+        const visibilitySymbol = method.visibility === 'private' ? '-' : '+';
+        return `${visibilitySymbol} ${method.name}(): ${method.returnType}`;
+      });
+
+      const classData = {
+        name: className,
+        attributes: formattedAttributes.length > 0 ? formattedAttributes : ['-  id: number'],
+        methods: formattedMethods.length > 0 ? formattedMethods : ['+ constructor()']
+      };
+
+      if (selectedClass) {
+        // Update existing class
+        const updatedClass = {
+          ...selectedClass,
+          ...classData
+        };
+        onUpdateClass(updatedClass);
+      } else {
+        // Create new class
+        onCreateClass(classData);
+      }
+      
+      // Reset form
+      setClassName("Student");
+      setAttributes([]);
+      setMethods([]);
+      onClose(); // Close panel after creating/updating
+    }
+  };
+
+  const removeAttribute = (index) => {
+    setAttributes(attributes.filter((_, i) => i !== index));
+  };
+
+  const removeMethod = (index) => {
+    setMethods(methods.filter((_, i) => i !== index));
+  };
+
   return (
-    <div className="side-panel">
-      <h2 className="panel-title">UML Editor</h2>
+    <>
+      {isVisible && <div className="panel-overlay" onClick={onClose}></div>}
+      <div className={`side-panel ${isVisible ? 'visible' : ''}`}>
+        <div className="panel-header">
+          <h2 className="panel-title">{selectedClass ? 'Edit UML Class' : 'Create UML Class'}</h2>
+        </div>
 
       {/* Class Details Accordion */}
       <div className="accordion">
@@ -67,16 +153,25 @@ export const SidePanel = (onClearCanvas) => {
 
               {attributes.map((attr, index) => (
                 <div key={index} className="form-group">
-                  <input
-                    type="text"
-                    placeholder="Attribute Name"
-                    value={attr.name}
-                    onChange={(e) => {
-                      const updated = [...attributes];
-                      updated[index].name = e.target.value;
-                      setAttributes(updated);
-                    }}
-                  />
+                  <div className="form-row">
+                    <input
+                      type="text"
+                      placeholder="Attribute Name"
+                      value={attr.name}
+                      onChange={(e) => {
+                        const updated = [...attributes];
+                        updated[index].name = e.target.value;
+                        setAttributes(updated);
+                      }}
+                    />
+                    <button 
+                      className="remove-btn"
+                      onClick={() => removeAttribute(index)}
+                      title="Remove attribute"
+                    >
+                      ×
+                    </button>
+                  </div>
                   <select
                     value={attr.visibility}
                     onChange={(e) => {
@@ -123,16 +218,25 @@ export const SidePanel = (onClearCanvas) => {
 
               {methods.map((m, index) => (
                 <div key={index} className="form-group">
-                  <input
-                    type="text"
-                    placeholder="Method Name"
-                    value={m.name}
-                    onChange={(e) => {
-                      const updated = [...methods];
-                      updated[index].name = e.target.value;
-                      setMethods(updated);
-                    }}
-                  />
+                  <div className="form-row">
+                    <input
+                      type="text"
+                      placeholder="Method Name"
+                      value={m.name}
+                      onChange={(e) => {
+                        const updated = [...methods];
+                        updated[index].name = e.target.value;
+                        setMethods(updated);
+                      }}
+                    />
+                    <button 
+                      className="remove-btn"
+                      onClick={() => removeMethod(index)}
+                      title="Remove method"
+                    >
+                      ×
+                    </button>
+                  </div>
                   <select
                     value={m.visibility}
                     onChange={(e) => {
@@ -162,6 +266,15 @@ export const SidePanel = (onClearCanvas) => {
             </div>
           </div>
         )}
+              <div className="panel-actions">
+        <button 
+          className="create-class-btn"
+          onClick={handleCreateClass}
+          disabled={!className.trim()}
+        >
+          {selectedClass ? 'Update Class' : 'Create Class'}
+        </button>
+      </div>
       </div>
 
       {/* Relation Details Accordion */}
@@ -184,7 +297,11 @@ export const SidePanel = (onClearCanvas) => {
           </div>
         )}
       </div>
+
+      {/* Action Buttons */}
+
     </div>
+    </>
   );
 };
 
