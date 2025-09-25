@@ -1,0 +1,70 @@
+.class-container {
+  background: white;
+  border: 2px solid #333;
+  border-radius: 8px;
+  min-width: 200px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  cursor: move;
+  user-select: none;
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+}
+
+.class-container.selected {
+  border-color: #007bff;
+}
+
+.class-container:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.class-header {
+  background: #f8f9fa;
+  padding: 12px;
+  border-bottom: 1px solid #333;
+  text-align: center;
+  font-weight: bold;
+  border-radius: 6px 6px 0 0;
+}
+
+.class-section {
+  padding: 8px 12px;
+  border-bottom: 1px solid #333;
+  min-height: 30px;
+}
+
+.class-section:last-child {
+  border-bottom: none;
+  border-radius: 0 0 6px 6px;
+}
+
+.section-item {
+  padding: 2px 0;
+  line-height: 1.4;
+}
+
+.editable-input {
+  background: transparent;
+  border: 1px dashed #ccc;
+  padding: 2px 4px;
+  font-family: inherit;
+  font-size: inherit;
+  width: 100%;
+  margin: 1px 0;
+}
+
+.add-button {
+  background: #e9ecef;
+  border: 1px dashed #adb5bd;
+  color: #6c757d;
+  cursor: pointer;
+  font-size: 11px;
+  padding: 4px 8px;
+  width: 100%;
+  margin-top: 4px;
+  border-radius: 3px;
+}
+
+.add-button:hover {
+  background: #dee2e6;
+}
